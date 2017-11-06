@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/wpk12345/Bamazon#readme",
   "dependencies": {
+    "inquirer": "^3.3.0",
     "mysql": "^2.15.0"
   }
 }
