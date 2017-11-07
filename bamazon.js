@@ -28,37 +28,60 @@ function start() {
 
     connection.query("SELECT * FROM products", function(err, results) {
         if (err) throw err;
-    inquirer
-      .prompt({
-        name: "WhatToBuy",
-        type: "input",
-        message: "Please enter the 'ID#' of the item you would like to purchase.",
-        validate: function (value) {
-            var pass = value.match(reg);
-            if (pass) {
-              return true;
-            }
-            return 'Please enter a valid "ID" number';
-          },
-          choices: function() {
-            for (var i = 0; i < results.length; i++) {
-              console.log("Item ID #" + results[i].item_id + " || " + results[i].product_name + " || " + "Item Price:$" + results[i].price);
-            }
-           
+          for (var i = 0; i < results.length; i++) {
+            console.log("Item ID #" + results[i].item_id + " || " + results[i].product_name + " || " + "Item Price:$" + results[i].price);
           }
-        })
-     .then(function(answer) {
-
-        inquirer.prompt({
-            name: "ID confirm",
-            type: 'confirm',
-            message: "You chose Item ID #" + answer.WhatToBuy + " is that correct?",
-            default: false
-        })
-
-      });
-    });
-};
       
-    
+    inquirer
+      .prompt([{
+        name: "WhatToBuy",
+        type: "list",
+        choices: function() { var choiceArray = [];
+          for (var i = 0; i < results.length; i++) {
+            choiceArray.push(results[i].product_name);
+          }
+          return choiceArray;
+        },
+        message: "Choose the item you would like to purchase."
+      },
+          {
+            name: "HowMuchToBuy",
+            type: "input",
+            message: "Quantity?",
+            validate: function (value) {
+              var pass = value.match(reg);
+              if (pass) {
+                return true;
+              }
+              return 'Please enter a valid number.(no letters/symbols)';
+            }
+          }   
+      ])
+     .then(function(answers) { 
+//a yes/no confirm of user choice.  
+        inquirer.prompt({
+            name: "IDconfirm",
+            type: 'confirm',
+            message: "You would like to purchase " + answers.HowMuchToBuy  + " " + answers.WhatToBuy + "(s) is that correct?",
+            default: false
+        }).then(function(answer) {
+         if(answer.IDconfirm){
+           //working now so this is where we need to work
+          //  Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
+           
+          //  If not, the app should log a phrase like Insufficient quantity!, and then prevent the order from going through.
+          //  However, if your store does have enough of the product, you should fulfill the customer's order.
+           
+          //  This means updating the SQL database to reflect the remaining quantity.
+          //  Once the update goes through, show the customer the total cost of their purchase.
+           console.log("ok, order on the way");
+         }
+         else {
+           start();
+         }
+        })
+     });
+});    
+
+};  
     
