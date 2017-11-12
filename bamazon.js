@@ -63,15 +63,15 @@ var connection = mysql.createConnection({
             if (results[i].product_name === answer.choice) {
               chosenItem = results[i];
               //the chosen product object
-              console.log(chosenItem);
+            //  console.log(chosenItem);
             }
           }
          // console.log(chosenItem.stock_quantity);
-            console.log(answer.HowMuchToBuy);
+           // console.log(answer.HowMuchToBuy);
         //need to take chosenItem and check quantity
           if (chosenItem.stock_quantity > parseInt(answer.HowMuchToBuy)) {
           var newQuantity =  chosenItem.stock_quantity - answer.HowMuchToBuy;
-          console.log(newQuantity);
+         // console.log(newQuantity);
           
             connection.query(
               "UPDATE products SET ? WHERE ?",
@@ -85,16 +85,35 @@ var connection = mysql.createConnection({
               ],
              
             );
-                          console.log(chosenItem.stock_quantity);
-
+            console.log("Your order of " + answer.HowMuchToBuy + " " +  chosenItem.product_name + "(s) is on the way.  There currently are " + newQuantity + " left in stock.");
+            backToHome ();
           }
           else {
-            // bid wasn't high enough, so apologize and start over
             console.log("Sorry, not enough quantity in stock to fill your order.  Returning to start. ");
             start();
           }
-            
+       
         });
       });
     };
+
+    function backToHome() {
+      inquirer.prompt(
+        {
+          name: "orderMore",
+          type: "confirm",
+          message: "Would you like to place another order?"
+        })
+        .then(function(answer) {
+          if (answer.orderMore) {
+            start();
+          }
+          else {
+            console.log("Thank you for shopping with us.")
+          }
+          
+          });
+        
+        };
+      
   
